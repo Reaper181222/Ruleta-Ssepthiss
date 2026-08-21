@@ -1,0 +1,370 @@
+/* =====================================================================
+   ssephtiss — style.css (Ruleta de Sorteos)
+   Arranca igual que el del fixture: mismos violetas, misma tipografía,
+   mismo fondo y mismo patrón de pantalla de rol / pin box / modales.
+   Abajo de todo eso está lo nuevo: rueda, cartel de premio con
+   pokébolas flotantes, panel de participantes e historial.
+   ===================================================================== */
+:root{
+  --violet-1:#c9a8ff;
+  --violet-2:#a855f7;
+  --violet-3:#7c3aed;
+  --violet-4:#4c1d95;
+  --violet-glow: rgba(168,85,247,0.85);
+  --black-0:#000000;
+  --black-1:#07040d;
+  --panel-bg: rgba(10,4,20,0.72);
+  --panel-border: rgba(168,85,247,0.35);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;min-height:100%;}
+body{
+  background: var(--black-0);
+  color:#e9defc;
+  font-family:'Rajdhani',sans-serif;
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+}
+#bg-layer{
+  position:fixed; inset:0;
+  background-image:url('bg.jpg');
+  background-size:cover;
+  background-position:center 30%;
+  z-index:-2;
+  filter: saturate(1.05);
+}
+#bg-shade{
+  position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.75) 55%, rgba(0,0,0,0.94) 100%);
+  z-index:-1;
+}
+#confetti-canvas{
+  position:fixed; inset:0;
+  width:100vw; height:100vh;
+  pointer-events:none;
+  z-index:999;
+}
+.wrap{
+  max-width:1200px;
+  margin:0 auto;
+  padding: 28px 20px 80px;
+  position:relative;
+  z-index:1;
+}
+h1.title{
+  font-family:'Cinzel', serif;
+  font-weight:900;
+  text-align:center;
+  letter-spacing:0.08em;
+  font-size: clamp(26px, 5vw, 52px);
+  margin: 10px 0 6px;
+  color:#f2e9ff;
+  text-shadow:
+    0 0 4px #000, 0 0 10px #000, 0 1px 0 #000,
+    0 0 8px var(--violet-glow), 0 0 18px var(--violet-3),
+    0 0 34px var(--violet-4), 0 0 60px rgba(124,58,237,0.5);
+  animation: flicker 4.5s infinite ease-in-out;
+}
+@keyframes flicker{
+  0%,100%{ opacity:1; } 48%{ opacity:1; } 50%{ opacity:0.88; } 52%{ opacity:1; }
+}
+.subtitle{
+  text-align:center; font-family:'Rajdhani',sans-serif;
+  letter-spacing:0.35em; text-transform:uppercase; font-size:13px;
+  color: var(--violet-1);
+  text-shadow: 0 0 8px var(--violet-glow), 0 0 2px #000;
+  margin-bottom: 30px;
+}
+.divider{
+  display:flex; align-items:center; gap:14px; justify-content:center;
+  margin: 18px auto 30px; max-width:500px; opacity:0.8;
+}
+.divider .line{ flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--violet-2), transparent); }
+.divider .diamond{ width:8px; height:8px; background:var(--violet-2); transform:rotate(45deg); box-shadow:0 0 8px var(--violet-glow); }
+
+/* ---------- Empty state ---------- */
+.empty-state{
+  max-width:560px; margin:60px auto; text-align:center;
+  background: var(--panel-bg); border:1px solid var(--panel-border);
+  border-radius:14px; padding:40px 28px; backdrop-filter: blur(6px);
+  box-shadow: 0 0 40px rgba(124,58,237,0.15), inset 0 0 30px rgba(124,58,237,0.05);
+}
+.empty-state h2{ font-family:'Cinzel',serif; color:var(--violet-1); margin-top:0; }
+.empty-state p{ color:#cbb8ec; line-height:1.5; }
+
+/* ---------- Pantalla de elegir rol ---------- */
+.role-gate{
+  display:flex; gap:24px; justify-content:center; flex-wrap:wrap;
+  max-width:760px; margin:20px auto 40px;
+}
+.role-btn{
+  flex:1; min-width:240px; max-width:320px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  background: var(--panel-bg); border:1px solid var(--panel-border);
+  border-radius:16px; padding:32px 20px; color:#f2e9ff; cursor:pointer;
+  font-family:'Rajdhani',sans-serif; font-weight:700; font-size:17px;
+  letter-spacing:0.03em; transition: all .18s ease;
+  box-shadow: 0 0 24px rgba(124,58,237,0.12);
+}
+.role-btn:hover{
+  border-color: var(--violet-2);
+  box-shadow: 0 0 34px rgba(168,85,247,0.4);
+  transform: translateY(-2px);
+}
+.role-hint{ font-weight:500; font-size:12.5px; color:#b39fd6; letter-spacing:0.02em; }
+.role-badge{
+  font-family:'Cinzel',serif; font-size:12px; letter-spacing:0.12em;
+  color: var(--violet-1); text-transform:uppercase;
+  padding:6px 12px; border:1px solid var(--panel-border); border-radius:20px;
+}
+.pin-error{ color:#ff8a8a; font-size:13px; margin-top:10px; }
+.pin-box{
+  max-width:360px; margin:60px auto; text-align:center;
+  background: var(--panel-bg); border:1px solid var(--panel-border); border-radius:14px;
+  padding:34px 26px; backdrop-filter: blur(6px);
+}
+.pin-box h2{ font-family:'Cinzel',serif; color:var(--violet-1); margin-top:0; font-size:20px; }
+input[type=password], input[type=text]{
+  width:100%; padding:12px 14px; border-radius:8px;
+  border:1px solid var(--panel-border);
+  background: rgba(0,0,0,0.4); color:#f2e9ff;
+  font-family:'Rajdhani',sans-serif; font-size:16px; outline:none;
+}
+input[type=password]:focus, input[type=text]:focus{
+  border-color: var(--violet-2);
+  box-shadow: 0 0 10px rgba(168,85,247,0.4);
+}
+
+/* ---------- Botones generales ---------- */
+.btn{
+  font-family:'Rajdhani',sans-serif; font-weight:700; letter-spacing:0.05em;
+  text-transform:uppercase; font-size:14px;
+  padding:11px 18px; border-radius:8px; border:1px solid var(--violet-3);
+  background: linear-gradient(180deg, rgba(124,58,237,0.35), rgba(76,29,149,0.35));
+  color:#f2e9ff; cursor:pointer;
+  box-shadow: 0 0 12px rgba(124,58,237,0.25);
+  transition: all .15s ease;
+}
+.btn:hover{ background: linear-gradient(180deg, rgba(124,58,237,0.55), rgba(76,29,149,0.55)); box-shadow:0 0 18px rgba(168,85,247,0.5); }
+.btn:active{ transform: translateY(1px); }
+.btn:disabled{ opacity:0.45; cursor:default; filter:grayscale(0.4); }
+.btn:disabled:hover{ background: linear-gradient(180deg, rgba(124,58,237,0.35), rgba(76,29,149,0.35)); box-shadow: 0 0 12px rgba(124,58,237,0.25); }
+.btn-danger{ border-color:#b91c1c; background:linear-gradient(180deg, rgba(185,28,28,0.3), rgba(80,10,10,0.3)); }
+.btn-danger:hover{ background:linear-gradient(180deg, rgba(185,28,28,0.5), rgba(80,10,10,0.5)); box-shadow:0 0 18px rgba(220,60,60,0.4); }
+.btn-small{ padding:6px 12px; font-size:12px; }
+.btn-spin{
+  font-size:20px; padding:18px 46px; border-radius:40px;
+  letter-spacing:0.12em;
+  box-shadow: 0 0 24px rgba(168,85,247,0.5);
+}
+.btn-spin:not(:disabled):hover{ box-shadow: 0 0 40px rgba(168,85,247,0.8); transform: translateY(-1px); }
+
+.toolbar{
+  display:flex; justify-content:center; align-items:center; gap:12px;
+  flex-wrap:wrap; margin-bottom:26px;
+}
+.status-pill{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12px; padding:5px 12px; border-radius:20px;
+  border:1px solid var(--panel-border); color:var(--violet-1);
+}
+.status-dot{ width:7px; height:7px; border-radius:50%; background:#5f5473; }
+.status-dot.on{ background:#7dffa0; box-shadow:0 0 6px #7dffa0; }
+.status-dot.off{ background:#ff8a8a; box-shadow:0 0 6px #ff8a8a; }
+
+/* =====================================================================
+   CARTEL DE PREMIO — el pokémon actual, con pokébolas flotando atrás
+   ===================================================================== */
+.prize-card{
+  max-width:420px; margin: 4px auto 34px; position:relative;
+  text-align:center; padding: 30px 24px 26px;
+  border:1px solid var(--panel-border); border-radius:18px;
+  background: var(--panel-bg); backdrop-filter: blur(6px);
+  box-shadow: 0 0 50px rgba(168,85,247,0.3), inset 0 0 30px rgba(124,58,237,0.08);
+  overflow:hidden;
+}
+.prize-label{
+  font-family:'Cinzel',serif; letter-spacing:0.28em; font-size:11px;
+  color:var(--violet-1); text-transform:uppercase; margin-bottom:10px;
+  position:relative; z-index:2;
+}
+.prize-orbit{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.pokeball{
+  position:absolute; width:34px; height:34px; opacity:0.35;
+  filter: drop-shadow(0 0 8px var(--violet-glow));
+  animation: pokeball-float 7s ease-in-out infinite;
+}
+.pokeball svg{ width:100%; height:100%; display:block; }
+.pokeball.p1{ top:8%; left:6%; animation-duration:8s; }
+.pokeball.p2{ bottom:10%; right:8%; width:26px; height:26px; animation-duration:6.2s; animation-delay:1.1s; }
+.pokeball.p3{ top:52%; left:-4%; width:22px; height:22px; animation-duration:9.4s; animation-delay:2.3s; opacity:0.22; }
+@keyframes pokeball-float{
+  0%{ transform: translateY(0) rotate(0deg); }
+  50%{ transform: translateY(-16px) rotate(180deg); }
+  100%{ transform: translateY(0) rotate(360deg); }
+}
+.prize-sprite-wrap{
+  position:relative; z-index:2; width:140px; height:140px; margin:0 auto 6px;
+  display:flex; align-items:center; justify-content:center;
+}
+.prize-sprite-glow{
+  position:absolute; inset:8px; border-radius:50%;
+  background: radial-gradient(circle, rgba(168,85,247,0.45) 0%, transparent 70%);
+  filter: blur(4px);
+  animation: sprite-pulse 2.6s ease-in-out infinite;
+}
+@keyframes sprite-pulse{ 0%,100%{ opacity:0.55; transform:scale(0.94);} 50%{ opacity:1; transform:scale(1.06);} }
+.prize-sprite{
+  position:relative; width:112px; height:112px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 14px var(--violet-glow));
+}
+.prize-sprite.spinning{ animation: sprite-spin-in .5s ease; }
+@keyframes sprite-spin-in{ 0%{ transform:scale(0.4) rotate(-25deg); opacity:0; } 100%{ transform:scale(1) rotate(0); opacity:1; } }
+.prize-name{
+  position:relative; z-index:2;
+  font-family:'Cinzel',serif; font-size:24px; font-weight:700; color:#fff;
+  text-shadow: 0 0 10px var(--violet-glow), 0 0 22px var(--violet-3);
+  text-transform:capitalize; margin-top:4px;
+}
+.prize-empty{ position:relative; z-index:2; color:#b39fd6; font-style:italic; font-size:14px; }
+.shiny-toggle{
+  position:relative; z-index:2; margin-top:14px;
+  display:inline-flex; align-items:center; gap:6px;
+  background:transparent; border:1px solid var(--panel-border);
+  border-radius:20px; padding:6px 14px; cursor:pointer;
+  color:#8a7aa8; font-family:'Rajdhani',sans-serif; font-weight:700;
+  font-size:12px; letter-spacing:0.05em; text-transform:uppercase;
+  transition: all .15s ease;
+}
+.shiny-toggle .star{ font-size:14px; }
+.shiny-toggle.active{
+  color:#ffe9a8; border-color:#e6c65c;
+  box-shadow:0 0 14px rgba(230,198,92,0.45);
+  background: linear-gradient(180deg, rgba(230,198,92,0.15), transparent);
+}
+.shiny-toggle:hover{ border-color:var(--violet-2); }
+.prize-edit-row{ position:relative; z-index:2; margin-top:16px; display:flex; gap:8px; }
+.prize-edit-row input{ flex:1; }
+
+/* =====================================================================
+   LA RUEDA
+   ===================================================================== */
+.wheel-section{
+  display:flex; gap:34px; justify-content:center; align-items:flex-start;
+  flex-wrap:wrap; margin: 10px 0 20px;
+}
+.wheel-stage{
+  display:flex; flex-direction:column; align-items:center; gap:22px;
+  flex-shrink:0;
+}
+.wheel-holder{
+  position:relative; width: min(420px, 86vw); aspect-ratio:1/1;
+}
+.wheel-pointer{
+  position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+  width:0; height:0; z-index:5;
+  border-left:16px solid transparent;
+  border-right:16px solid transparent;
+  border-top:26px solid var(--violet-1);
+  filter: drop-shadow(0 0 8px var(--violet-glow));
+}
+.wheel-ring{
+  position:absolute; inset:-8px; border-radius:50%;
+  border:2px solid var(--violet-2);
+  box-shadow: 0 0 30px rgba(168,85,247,0.45), inset 0 0 20px rgba(124,58,237,0.25);
+  pointer-events:none;
+}
+.wheel-hub{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:17%; height:17%; border-radius:50%;
+  background: radial-gradient(circle at 35% 30%, #f2e9ff, var(--violet-2) 55%, var(--violet-4) 100%);
+  border:2px solid #f2e9ff;
+  box-shadow: 0 0 20px var(--violet-glow);
+  z-index:4;
+}
+.wheel-svg{ width:100%; height:100%; display:block; }
+.wheel-svg-group{ transform-origin:50% 50%; transform-box: fill-box; transition: transform 4.6s cubic-bezier(0.15,0.65,0.15,1); }
+.wheel-slice-label{
+  font-family:'Rajdhani',sans-serif; font-weight:700; fill:#f2e9ff;
+  text-shadow: 0 0 4px #000;
+}
+.wheel-empty-msg{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:20px; color:#b39fd6; font-style:italic; font-size:14px;
+}
+
+.winner-announce{
+  max-width:360px; text-align:center; padding:16px 22px; border-radius:14px;
+  background: var(--panel-bg); border:1px solid var(--violet-2);
+  box-shadow: 0 0 40px rgba(168,85,247,0.4);
+  animation: champion-pop .4s ease;
+}
+@keyframes champion-pop{ 0%{ transform:scale(0.85); opacity:0; } 100%{ transform:scale(1); opacity:1; } }
+.winner-announce .label{ font-family:'Cinzel',serif; letter-spacing:0.25em; font-size:11px; color:var(--violet-1); text-transform:uppercase; }
+.winner-announce .name{ font-family:'Cinzel',serif; font-size:24px; font-weight:700; color:#fff; text-shadow:0 0 10px var(--violet-glow); margin-top:6px; }
+
+/* ---------- Panel lateral: participantes + historial ---------- */
+.side-panels{
+  display:flex; flex-direction:column; gap:20px;
+  width: min(320px, 92vw); flex-shrink:0;
+}
+.panel{
+  background: var(--panel-bg); border:1px solid var(--panel-border);
+  border-radius:14px; padding:18px 18px 16px; backdrop-filter: blur(6px);
+}
+.panel h3{
+  font-family:'Cinzel',serif; font-size:14px; letter-spacing:0.1em;
+  color:var(--violet-1); text-transform:uppercase; margin:0 0 12px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.panel-list{
+  list-style:none; margin:0; padding:0;
+  max-height:260px; overflow-y:auto;
+  display:flex; flex-direction:column; gap:6px;
+}
+.panel-list::-webkit-scrollbar{ width:6px; }
+.panel-list::-webkit-scrollbar-thumb{ background:var(--violet-4); border-radius:6px; }
+.panel-row{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:7px 10px; border-radius:8px;
+  background: rgba(124,58,237,0.08);
+  font-size:13.5px;
+}
+.panel-row .chip{
+  font-size:10px; padding:2px 7px; border-radius:10px;
+  border:1px solid var(--panel-border); color:var(--violet-1);
+  flex-shrink:0;
+}
+.panel-row .chip.x2{ color:#ffe9a8; border-color:#e6c65c; }
+.panel-row .rm-btn{
+  background:none; border:none; color:#8a7aa8; cursor:pointer; font-size:15px;
+  padding:0 2px; line-height:1;
+}
+.panel-row .rm-btn:hover{ color:#ff8a8a; }
+.panel-empty{ color:#5f5473; font-style:italic; font-size:13px; padding:6px 2px; }
+.add-participant-row{ display:flex; gap:6px; margin-top:12px; }
+.add-participant-row input{ padding:8px 10px; font-size:13px; }
+
+/* ---------- Botón de Discord ---------- */
+.discord-wrap{ display:flex; justify-content:center; margin: 30px 0 10px; }
+.discord-btn{
+  display:inline-flex; align-items:center; gap:10px;
+  padding:11px 20px; border-radius:30px; border:1px solid var(--violet-3);
+  background: linear-gradient(180deg, rgba(124,58,237,0.22), rgba(76,29,149,0.22));
+  color: var(--violet-1); text-decoration:none;
+  font-family:'Rajdhani',sans-serif; font-weight:700; letter-spacing:0.04em;
+  font-size:14px; text-transform:uppercase; transition: all .15s ease;
+  box-shadow: 0 0 14px rgba(124,58,237,0.2);
+}
+.discord-btn:hover{ color:#fff; box-shadow: 0 0 22px rgba(168,85,247,0.5); border-color: var(--violet-2); }
+.discord-icon{ width:20px; height:20px; color: var(--violet-1); }
+
+footer.note{ text-align:center; color:#4d4166; font-size:11px; margin-top:50px; letter-spacing:0.1em; text-transform:uppercase;}
+
+@media (max-width: 760px){
+  .wheel-section{ flex-direction:column; align-items:center; }
+  .side-panels{ width:min(420px, 92vw); }
+}
