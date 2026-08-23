@@ -279,12 +279,13 @@ function buildWheelSvg(segments){
     slices += `<path d="${sliceWedgePath(cx,cy,r,start,end)}" fill="url(#slice-grad-${gi})" stroke="rgba(233,222,255,0.5)" stroke-width="1.3"></path>`;
     if(anglePerSeg >= 8){
       const mid = start + anglePerSeg/2;
-      const pos = polarPoint(cx, cy, r*0.62, mid);
+      const pos = polarPoint(cx, cy, r*0.64, mid);
       let textRot = mid - 90;
       textRot = ((textRot % 360) + 360) % 360;
       if(textRot > 90 && textRot < 270) textRot += 180;
-      const fontSize = Math.min(18, Math.max(10, anglePerSeg * 0.9));
-      labels += `<text class="wheel-slice-label" x="${pos.x.toFixed(2)}" y="${pos.y.toFixed(2)}" font-size="${fontSize.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textRot.toFixed(1)} ${pos.x.toFixed(2)} ${pos.y.toFixed(2)})">${escapeHtml(truncate(seg.username, 12))}</text>`;
+      const fontSize = Math.min(16, Math.max(8, anglePerSeg * 0.85));
+      const maxChars = Math.max(3, Math.min(12, Math.round(anglePerSeg / 2.1)));
+      labels += `<text class="wheel-slice-label" x="${pos.x.toFixed(2)}" y="${pos.y.toFixed(2)}" font-size="${fontSize.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" transform="rotate(${textRot.toFixed(1)} ${pos.x.toFixed(2)} ${pos.y.toFixed(2)})">${escapeHtml(truncate(seg.username, maxChars))}</text>`;
     }
   });
   // brillo tipo vidrio, gira junto con la rueda
