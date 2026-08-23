@@ -277,7 +277,7 @@ function buildWheelSvg(segments){
     const start = i * anglePerSeg, end = (i+1) * anglePerSeg;
     const gi = paletteIndexForUsername(seg.username);
     slices += `<path d="${sliceWedgePath(cx,cy,r,start,end)}" fill="url(#slice-grad-${gi})" stroke="rgba(233,222,255,0.5)" stroke-width="1.3"></path>`;
-    if(anglePerSeg >= 8){
+    {
       const mid = start + anglePerSeg/2;
       const pos = polarPoint(cx, cy, r*0.64, mid);
       let textRot = mid - 90;
