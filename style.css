@@ -301,7 +301,7 @@ input[type=password]:focus, input[type=text]:focus{
   flex-shrink:0;
 }
 .wheel-holder{
-  position:relative; width: min(440px, 86vw); aspect-ratio:1/1;
+  position:relative; width: min(760px, 94vw); aspect-ratio:1/1;
 }
 .wheel-holder::before{
   content:""; position:absolute; inset:-34px; border-radius:50%; z-index:0;
