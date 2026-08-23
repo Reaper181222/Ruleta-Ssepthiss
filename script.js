@@ -45,6 +45,7 @@ try{
 /* ============ ESTADO EN MEMORIA ============ */
 let role = sessionStorage.getItem('ssephtiss-ruleta-role') || null; // null | 'espectador' | 'editor'
 let streamerCode = 'R34P3R';
+let sorteoCerrado = false;
 let participants = []; // [{username, chances, subscriber, entered_at}] — chances = vidas que le quedan
 let winnersHistory = []; // acá guardo a los que van QUEDANDO AFUERA (no al campeón)
 let prize = { pokemon_name: null, prize_label: '', is_shiny: false };
@@ -101,6 +102,7 @@ async function fetchAll(){
   if(prizeRes.error) console.error('Error leyendo prize:', prizeRes.error);
 
   if(settingsRes.data) streamerCode = settingsRes.data.streamer_code || 'R34P3R';
+   if(settingsRes.data) sorteoCerrado = !!settingsRes.data.sorteo_cerrado;
   if(participantsRes.data) participants = participantsRes.data;
   if(winnersRes.data) winnersHistory = winnersRes.data;
   if(prizeRes.data){
@@ -162,6 +164,12 @@ async function resetGiveaway(){
   await fetchAll();
   renderApp();
 }
+async function toggleSorteoCerrado(){
+  const { error } = await sb.from('settings').update({ sorteo_cerrado: !sorteoCerrado }).eq('id', 1);
+  if(error){ showSaveError(error); return; }
+  await fetchAll();
+  renderApp();
+}
 
 /* ---------- Escrituras "crudas" que usa la eliminación de la ruleta ----------
    Estas NO hacen fetch ni render: eso lo maneja resolveElimination() una
@@ -217,6 +225,7 @@ function startChatListener(){
     if(self) return;
     const text = (message || '').trim().toLowerCase();
     if(text !== CHAT_COMMAND) return;
+    if(sorteoCerrado) return;
     const username = tags['display-name'] || tags.username;
     if(!username) return;
     const isSub = !!(tags.subscriber || (tags.badges && tags.badges.subscriber));
@@ -686,6 +695,7 @@ function participantsPanelHtml(isEditor){
           <button class="btn btn-small" id="add-name-btn">+</button>
         </div>
         <div style="margin-top:12px; display:flex; gap:8px;">
+          <button class="btn btn-small ${sorteoCerrado ? '' : 'btn-danger'}" id="toggle-sorteo-btn" style="flex:1;">${sorteoCerrado ? 'Abrir sorteo' : 'Cerrar sorteo'}</button>
           <button class="btn btn-small btn-danger" id="reset-btn" style="flex:1;">Reiniciar sorteo</button>
         </div>
       ` : ''}
@@ -758,6 +768,9 @@ function renderApp(){
 
   const resetBtn = $('reset-btn');
   if(resetBtn) resetBtn.onclick = resetGiveaway;
+
+  const toggleSorteoBtn = $('toggle-sorteo-btn');
+  if(toggleSorteoBtn) toggleSorteoBtn.onclick = toggleSorteoCerrado;
 
   const addBtn = $('add-name-btn');
   if(addBtn) addBtn.onclick = ()=>{
